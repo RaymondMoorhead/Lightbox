@@ -1,0 +1,2 @@
+#exclude the binary file and the associated imgui file
+Bin/*
