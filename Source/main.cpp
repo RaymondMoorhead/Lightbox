@@ -14,7 +14,7 @@ int main(int argc, char** argv)
   g_control.lights[0] = Light(glm::vec3(0.0f, 2.0f, 2.0f),
                                    glm::vec3(0.0f, -1.0f, -1.0f),
                                    glm::vec4(0.5f, 1.0f, 0.5f, 1.0f),
-                                   Spot, .98f, .99f);
+                                   Spot, .90f, 1.0f);
   g_control.lights[1] = Light(glm::vec3(0.0f, 0.0f, 0.0f),
                                    glm::vec3(-1.0f, -1.0f, 0.0f),
                                    glm::vec4(1.0f, 0.5f, 0.5f, 1.0f),
