@@ -30,8 +30,8 @@ struct Light
   float cone_outer          = 0.90f;
   float cone_inner          = 0.95f;
   LightType type            = Directional;
-  float intensity_quadratic = 0.5f;
-  float intensity_linear    = 0.0f;
+  float intensity_quadratic = 0.1f;
+  float intensity_linear    = 0.2f;
   ShadowMap shadow_map;
   
   static glm::mat4 ortho_projection;
