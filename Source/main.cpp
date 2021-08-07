@@ -3,21 +3,23 @@
 
 #include <stdio.h>
 
+unsigned CONTROL_LIGHT = -1;
+
 int main(int argc, char** argv)
 {
   GraphicsController g_control;
   
   // DEBUG LIGHTS
   printf("main loading lights...\n");
-  g_control.lights[1] = Light(glm::vec3(0.0f, 0.0f, 2.0f),
-                                   glm::vec3(0.0f, 0.0f, -1.0f),
+  g_control.lights[0] = Light(glm::vec3(0.0f, 2.0f, 2.0f),
+                                   glm::vec3(0.0f, -1.0f, -1.0f),
                                    glm::vec4(0.5f, 1.0f, 0.5f, 1.0f),
                                    Spot, .98f, .99f);
-  g_control.lights[2] = Light(glm::vec3(0.0f, 2.0f, 0.0f),
+  g_control.lights[1] = Light(glm::vec3(0.0f, 0.0f, 0.0f),
                                    glm::vec3(-1.0f, -1.0f, 0.0f),
                                    glm::vec4(1.0f, 0.5f, 0.5f, 1.0f),
                                    Point);
-  g_control.lights[3] = Light(glm::vec3(0.0f, 5.0f, 0.0f),
+  g_control.lights[2] = Light(glm::vec3(0.0f, 5.0f, 0.0f),
                                    glm::vec3(-1.0f, -1.0f, 0.0f),
                                    glm::vec4(0.5f, 0.5f, 1.0f, 1.0f),
                                    Directional);
@@ -29,7 +31,7 @@ int main(int argc, char** argv)
   g_control.CreateObject("ground", Basic);
   Object* statue = g_control.CreateObject("statue", Basic);
 
-  bool flashlight_toggle_in_progress[g_control.num_lights] = {false};
+  bool light_toggle_in_progress[g_control.num_lights] = {false};
   
   printf("main beginning loop\n");
   float rotate = 0.0f;
@@ -42,19 +44,22 @@ int main(int argc, char** argv)
     
     for(int i = 0; i < g_control.num_lights; ++i)
     {
-      if(glfwGetKey(g_control.window, GLFW_KEY_0 + i) == GLFW_PRESS && !flashlight_toggle_in_progress[i])
+      if(glfwGetKey(g_control.window, GLFW_KEY_0 + i) == GLFW_PRESS && !light_toggle_in_progress[i])
       {
         g_control.lights[i].is_on = !g_control.lights[i].is_on;
         g_control.ReloadLightUniforms(i);
-        flashlight_toggle_in_progress[i] = true;
+        light_toggle_in_progress[i] = true;
       }
       else if(glfwGetKey(g_control.window, GLFW_KEY_0 + i) == GLFW_RELEASE)
-        flashlight_toggle_in_progress[i] = false;
+        light_toggle_in_progress[i] = false;
     }
     
-    g_control.lights[1].position = g_control.camera->position + g_control.camera->orientation;
-    g_control.lights[1].direction =  g_control.camera->orientation;
-    g_control.ReloadLightUniforms(1);
+    if(CONTROL_LIGHT < g_control.num_lights)
+    {
+      g_control.lights[CONTROL_LIGHT].position = g_control.camera->position;
+      g_control.lights[CONTROL_LIGHT].direction =  g_control.camera->orientation;
+      g_control.ReloadLightUniforms(CONTROL_LIGHT);
+    }
   }
   
   g_control.Exit();

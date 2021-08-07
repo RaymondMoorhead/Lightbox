@@ -187,6 +187,8 @@ bool GraphicsController::Update()
   return !glfwWindowShouldClose(window);
 }
 
+extern unsigned CONTROL_LIGHT;
+
 void GraphicsController::UpdateImgui()
 {
   ImGui_ImplOpenGL3_NewFrame();
@@ -203,6 +205,17 @@ void GraphicsController::UpdateImgui()
         {
           if(ImGui::BeginMenu(std::to_string(i).c_str()))
           {
+            bool direct_control = CONTROL_LIGHT == i;
+            if(ImGui::Checkbox("Control Directly", &direct_control))
+            {
+              if(direct_control)
+                CONTROL_LIGHT = i;
+              else
+                CONTROL_LIGHT = -1;
+            }
+            if(ImGui::IsItemHovered())
+              ImGui::SetTooltip("Attach the light to camera for fine positioning constrol");
+            
             if(lights[i].ImGuiDraw())
               ReloadLightUniforms(i);
             ImGui::EndMenu();
