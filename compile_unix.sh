@@ -1,6 +1,6 @@
 #!/bin/bash
 
-g++ -o Bin/GraphicsDemo.out -IDependencies Source/*.cpp Source/Graphics/*.cpp Source/Graphics/LowLevel/*.cpp Dependencies/glad/glad.c Dependencies/imgui/*.cpp -ldl -lglfw
+g++ -o Bin/GraphicsDemo.out -IDependencies Source/*.cpp Source/Graphics/*.cpp Source/Graphics/LowLevel/*.cpp Dependencies/glad/glad.c Dependencies/imgui/*.cpp Dependencies/imGuIZMO.quat/*.cpp -ldl -lglfw
 
 if [ $? -eq 0 ]; then
   echo "Your program has successfully compiled, here is the output:"
