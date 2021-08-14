@@ -112,6 +112,8 @@ void Light::UpdateUniforms(Shader** shaders, unsigned light_num, unsigned num_sh
   }
 }
 
+#include <imGuIZMO.quat/imGuIZMOquat.h>
+
 bool Light::ImGuiDraw()
 {
   bool changed = false;
@@ -144,7 +146,14 @@ bool Light::ImGuiDraw()
       ImGui::SetTooltip("Only affects the Shadow Map");
     
     if(type != Point)
-      changed |= ImGui::DragFloat3("Direction", &direction.x);
+    {
+      vec3 direction_mod(direction.x, direction.y, direction.z);
+      if(ImGui::gizmo3D("Direction", direction_mod))
+      {
+        direction = glm::vec3(direction_mod.x, direction_mod.y, direction_mod.z);
+        changed = true;
+      }
+    }
     
     if(type == Spot)
     {
