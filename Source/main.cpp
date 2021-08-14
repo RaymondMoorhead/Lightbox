@@ -5,6 +5,10 @@
 
 unsigned CONTROL_LIGHT = -1;
 
+Object* ROTATE_OBJECT = nullptr;
+glm::vec3 ROTATE_AXIS = glm::vec3(0.f, 1.f, 0.f);
+float ROTATE_SPEED = 0.25f;
+
 int main(int argc, char** argv)
 {
   GraphicsController g_control;
@@ -29,18 +33,29 @@ int main(int argc, char** argv)
   // DEBUG MODELS
   printf("main loading models...\n");
   g_control.CreateObject("ground", Basic);
-  Object* statue = g_control.CreateObject("statue", Basic);
+  g_control.CreateObject("statue", Basic);
 
   bool light_toggle_in_progress[g_control.num_lights] = {false};
   
   printf("main beginning loop\n");
+  
+  Object* last_rotated_object = nullptr;
   float rotate = 0.0f;
   while(g_control.Update())
   {
-    rotate += 360.0f * 0.25f * (1.0f / 60.0f);
-    statue->rotation = glm::angleAxis(glm::radians(rotate), glm::vec3(0.f, 1.f, 0.f));
-    if(statue->rotation.z >= 360.0f)
-      statue->rotation.z -= 360.0f;
+    if(ROTATE_OBJECT)
+    {
+      if(last_rotated_object != ROTATE_OBJECT)
+      {
+        last_rotated_object = ROTATE_OBJECT;
+        rotate = 0.0f;
+      }
+      constexpr float PI_TIMES_2 = 6.28318530718f;
+      rotate += PI_TIMES_2 * ROTATE_SPEED * (1.0f / 60.0f);
+      ROTATE_OBJECT->rotation = glm::angleAxis(rotate, ROTATE_AXIS);
+      if(rotate >= PI_TIMES_2)
+        rotate -= PI_TIMES_2;
+    }
     
     for(int i = 0; i < g_control.num_lights; ++i)
     {

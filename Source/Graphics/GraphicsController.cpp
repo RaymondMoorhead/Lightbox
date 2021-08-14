@@ -54,12 +54,16 @@ GraphicsController::GraphicsController(unsigned screen_width, unsigned screen_he
 
 void GraphicsController::Initialize()
 {
+  printf("GraphicsController::Initialization starting\n");
+  printf("\tInitializing glfw...\n");
   glfwInit();
   
+  printf("\tSetting version hints...\n");
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   
+  printf("\tCreating window...\n");
   window = glfwCreateWindow(screen_width_, screen_height_, window_name_, nullptr, nullptr);
   
   if(window == nullptr)
@@ -71,7 +75,10 @@ void GraphicsController::Initialize()
   
   glfwMakeContextCurrent(window);
   
+  printf("\tLoading GL with glad...\n");
   gladLoadGL();
+  
+  printf("\tPrimary initialization complete, loading additional assets...\n");
   
   glViewport(0, 0, screen_width_, screen_height_);
   camera = new Camera(screen_width_, screen_height_, glm::vec3(0.0f, 0.0f, 2.0f));
@@ -187,7 +194,11 @@ bool GraphicsController::Update()
   return !glfwWindowShouldClose(window);
 }
 
+#include <imGuIZMO.quat/imGuIZMOquat.h>
 extern unsigned CONTROL_LIGHT;
+extern Object* ROTATE_OBJECT;
+extern glm::vec3 ROTATE_AXIS;
+extern float ROTATE_SPEED;
 
 void GraphicsController::UpdateImgui()
 {
@@ -199,6 +210,29 @@ void GraphicsController::UpdateImgui()
   {
     if (ImGui::BeginMenu("Edit"))
     {
+      if(ImGui::BeginMenu("Objects"))
+      {        
+        for(auto it = objects_.begin(); it != objects_.end(); ++it)
+        {
+          if(ImGui::BeginMenu(it->first.c_str()))
+          {
+            bool rotate_this_object = ROTATE_OBJECT == it->second;
+            if(ImGui::Checkbox("Rotate", &rotate_this_object))
+              ROTATE_OBJECT = rotate_this_object ? it->second : nullptr;
+            if(ROTATE_OBJECT)
+            {
+              ImGui::SliderFloat("Rotation Speed", &ROTATE_SPEED, 0.01f, 1.0f);
+              vec3 axis(ROTATE_AXIS.x, ROTATE_AXIS.y, ROTATE_AXIS.z);
+              if(ImGui::gizmo3D("Rotation Axis", axis))
+                ROTATE_AXIS = glm::vec3(axis.x, axis.y, axis.z);
+            }
+            
+            it->second->ImGuiDraw();
+            ImGui::EndMenu();
+          }
+        }
+        ImGui::EndMenu();
+      }
       if(ImGui::BeginMenu("Lights"))
       {
         for(unsigned i = 0; i < num_lights; ++i)
