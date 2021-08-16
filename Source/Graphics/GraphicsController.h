@@ -84,4 +84,7 @@ class GraphicsController
     double cur_time_ = 0.0;
     double time_diff_ = 0.0;
     unsigned int counter_ = 0;
+    
+    // version, for extra features
+    int gl_version_major, gl_version_minor;
 };

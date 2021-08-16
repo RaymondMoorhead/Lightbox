@@ -59,8 +59,8 @@ void GraphicsController::Initialize()
   glfwInit();
   
   printf("\tSetting version hints...\n");
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl_version_major = 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl_version_minor = 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   
   printf("\tCreating window...\n");
@@ -68,9 +68,18 @@ void GraphicsController::Initialize()
   
   if(window == nullptr)
   {
-    printf("Failed to create GLFW window\n");
-    glfwTerminate();
-    return;
+    printf("\t\tContext %d.%d failed, proceeding with a lessr version which will disable certain features...\n", gl_version_major, gl_version_minor);
+    
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl_version_major = 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl_version_minor = 3);
+    
+    window = glfwCreateWindow(screen_width_, screen_height_, window_name_, nullptr, nullptr);
+    if(window == nullptr)
+    {
+      printf("Failed to create GLFW window\n");
+      glfwTerminate();
+      return;
+    }
   }
   
   glfwMakeContextCurrent(window);
@@ -122,8 +131,11 @@ void GraphicsController::Initialize()
   glCullFace(GL_FRONT);
   glFrontFace(GL_CCW);
   
-  glEnable(GL_DEBUG_OUTPUT);
-  glDebugMessageCallback(GL_MESSAGE_CALLBACK, 0);
+  if(gl_version_major >= 4 && gl_version_minor >= 3)
+  {
+    glEnable(GL_DEBUG_OUTPUT);
+    glDebugMessageCallback(GL_MESSAGE_CALLBACK, 0);
+  }
   
   // LIGHTS
   for(unsigned i = 0; i < num_lights; ++i)
