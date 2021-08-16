@@ -68,7 +68,7 @@ void GraphicsController::Initialize()
   
   if(window == nullptr)
   {
-    printf("\t\tContext %d.%d failed, proceeding with a lessr version which will disable certain features...\n", gl_version_major, gl_version_minor);
+    printf("\t\tContext %d.%d failed, proceeding with a lesser version which will disable certain features...\n", gl_version_major, gl_version_minor);
     
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl_version_major = 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl_version_minor = 3);
