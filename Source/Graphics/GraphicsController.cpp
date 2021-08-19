@@ -59,8 +59,8 @@ void GraphicsController::Initialize()
   glfwInit();
   
   printf("\tSetting version hints...\n");
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl_version_major = 4);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl_version_minor = 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl_version_major_ = 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl_version_minor_ = 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   
   printf("\tCreating window...\n");
@@ -68,10 +68,10 @@ void GraphicsController::Initialize()
   
   if(window == nullptr)
   {
-    printf("\t\tContext %d.%d failed, proceeding with a lesser version which will disable certain features...\n", gl_version_major, gl_version_minor);
+    printf("\t\tContext %d.%d failed, proceeding with a lesser version which will disable certain features...\n", gl_version_major_, gl_version_minor_);
     
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl_version_major = 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl_version_minor = 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl_version_major_ = 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl_version_minor_ = 3);
     
     window = glfwCreateWindow(screen_width_, screen_height_, window_name_, nullptr, nullptr);
     if(window == nullptr)
@@ -131,7 +131,7 @@ void GraphicsController::Initialize()
   glCullFace(GL_FRONT);
   glFrontFace(GL_CCW);
   
-  if(gl_version_major >= 4 && gl_version_minor >= 3)
+  if(gl_version_major_ >= 4 && gl_version_minor_ >= 3)
   {
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(GL_MESSAGE_CALLBACK, 0);
@@ -223,7 +223,12 @@ void GraphicsController::UpdateImgui()
     if (ImGui::BeginMenu("Edit"))
     {
       if(ImGui::BeginMenu("Objects"))
-      {        
+      {
+        if(ImGui::Button("Add"))
+          CreateObject(model_name_, Basic);
+        ImGui::SameLine();
+        ImGui::InputText("", model_name_, model_name_size_);
+        
         for(auto it = objects_.begin(); it != objects_.end(); ++it)
         {
           if(ImGui::BeginMenu(it->first.c_str()))

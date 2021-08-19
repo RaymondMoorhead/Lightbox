@@ -86,5 +86,9 @@ class GraphicsController
     unsigned int counter_ = 0;
     
     // version, for extra features
-    int gl_version_major, gl_version_minor;
+    int gl_version_major_, gl_version_minor_;
+    
+    // used in imgui object loading
+    static constexpr size_t model_name_size_ = 30;
+    char model_name_[model_name_size_] = {'\0'};
 };
