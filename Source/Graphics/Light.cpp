@@ -26,7 +26,7 @@ Light::Light(glm::vec3 pos, glm::vec3 dir, glm::vec4 col, LightType ltype, float
 
 void Light::Initialize()
 {
-  shadow_map.Initialize(type == Directional ? GL_TEXTURE_2D : GL_TEXTURE_CUBE_MAP);
+  shadow_map.Initialize(type == Directional ? GL_TEXTURE_2D : GL_TEXTURE_CUBE_MAP, true);
 }
 
 Light& Light::operator=(const Light& rhs)
@@ -141,7 +141,7 @@ bool Light::ImGuiDraw()
       changed |= ImGui::SliderFloat("Linear Intensity", &intensity_linear, 0.0f, 1.0f);
     }
     
-    changed |= ImGui::DragFloat3("Position", &position.x);
+    changed |= ImGui::DragFloat3("Position", &position.x, 0.1f);
     if(ImGui::IsItemHovered() && type == Directional)
       ImGui::SetTooltip("Only affects the Shadow Map");
     

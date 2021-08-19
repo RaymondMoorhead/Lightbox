@@ -3,32 +3,11 @@
 #include "../Object.h"
 #include "../Light.h"
 
-#include <stdio.h>
+const unsigned ShadowMap::shadow_width = 1024;
+const unsigned ShadowMap::shadow_height = 1024;
 
-const unsigned ShadowMap::width = 1024;
-const unsigned ShadowMap::height = 1024;
-
-void ShadowMap::Initialize(GLenum tex_type_)
+ShadowMap::ShadowMap() : FBO(shadow_width, shadow_height)
 {
-  glGenFramebuffers(1, &depth_map_fbo);
-  
-  SetUp_(tex_type_);
-  
-  glBindFramebuffer(GL_FRAMEBUFFER, depth_map_fbo);
-  glDrawBuffer(GL_NONE);
-  glReadBuffer(GL_NONE);
-  
-  GLenum result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-  if(result != GL_FRAMEBUFFER_COMPLETE)
-    printf("ShadowMap::SetUp_ has an incomplete framebuffer: %d\n", result);
-  
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-void ShadowMap::ChangeType(GLenum tex_type_)
-{
-  DeleteTex();
-  SetUp_(tex_type_);
 }
 
 void ShadowMap::DrawMap(GraphicsController* g_control, std::map<std::string, Object*>& objects, Light* light)
@@ -83,57 +62,5 @@ void ShadowMap::DrawMap(GraphicsController* g_control, std::map<std::string, Obj
   
   for(auto it = objects.begin(); it != objects.end(); ++it)
     it->second->Draw(*(g_control->camera), shader_depth);
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-void ShadowMap::BindTex(unsigned unit)
-{
-  glActiveTexture(GL_TEXTURE0 + unit);
-  glBindTexture(tex_type, depth_map_tex);
-}
-
-void ShadowMap::DeleteTex()
-{
-  glBindFramebuffer(GL_FRAMEBUFFER, depth_map_fbo);
-  if(tex_type == GL_TEXTURE_CUBE_MAP)
-    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,  0, 0);
-  else
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,  GL_TEXTURE_2D, 0, 0);
-  glDeleteTextures(1, &depth_map_tex);
-  tex_type = -1;
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-void ShadowMap::SetUp_(GLenum tex_type_)
-{
-  tex_type = tex_type_;
-  glGenTextures(1, &depth_map_tex);
-  glBindTexture(tex_type, depth_map_tex);
-  
-  if(tex_type == GL_TEXTURE_CUBE_MAP)
-  {
-    for(unsigned i = 0; i < 6; ++i)
-      glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    glBindFramebuffer(GL_FRAMEBUFFER, depth_map_fbo);
-    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,  depth_map_tex, 0);
-  }
-  else
-  {
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-    float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
-    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-    glBindFramebuffer(GL_FRAMEBUFFER, depth_map_fbo);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,  GL_TEXTURE_2D, depth_map_tex, 0);
-  }
-  
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
