@@ -260,7 +260,7 @@ std::vector<Texture> Model::GetTextures_()
     }
     else if(tex_path.find("metallicRoughness") != std::string::npos || tex_path.find("specular") != std::string::npos)
     {
-      Texture specular = Texture((file_dir + tex_path).c_str(), "specular", loaded_tex_.size() + 10);
+      Texture specular = Texture((file_dir + tex_path).c_str(), "specular", loaded_tex_.size() + 20);
       textures.push_back(specular);
       loaded_tex_.push_back(specular);
       loaded_tex_name_.push_back(tex_path);
