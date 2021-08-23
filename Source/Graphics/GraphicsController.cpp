@@ -146,6 +146,10 @@ void GraphicsController::Initialize()
   
   GL_ERROR_CHECK;
   
+  // HARD CODED MODELS
+  
+  AddHardCodedModels_();
+  
   // IMGUI
   
   IMGUI_CHECKVERSION();
@@ -390,6 +394,41 @@ void GraphicsController::ReloadLightUniforms(unsigned light_num)
     lights[light_num].UpdateUniforms(shaders_, light_num, NumShaderTypes);
   
   GL_ERROR_CHECK;
+}
+
+void GraphicsController::AddHardCodedModels_()
+{
+  // Textured Plane
+  
+  // Vertices coordinates
+  Vertex vertices[] =
+  { //               COORDINATES           /            COLORS          /           NORMALS         /       TEXCOORDS         //
+  	Vertex{glm::vec3(-1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)},
+  	Vertex{glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f)},
+  	Vertex{glm::vec3( 1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f)},
+  	Vertex{glm::vec3( 1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f)}
+  };
+  
+  // Indices for vertices order
+  GLuint indices[] =
+  {
+  	0, 1, 2,
+  	0, 2, 3
+  };
+  
+  // Texture data
+	Texture textures[]
+	{
+		Texture("../Resources/Textures/brick_diffuse.png", "diffuse", 20),
+		Texture("../Resources/Textures/brick_normal.png", "normal", 21),
+    Texture("../Resources/Textures/brick_displacement.png", "displacement", 22)
+	};
+  
+  std::vector <Vertex> verts(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
+	std::vector <GLuint> ind(indices, indices + sizeof(indices) / sizeof(GLuint));
+	std::vector <Texture> tex(textures, textures + sizeof(textures) / sizeof(Texture));
+  
+  models_.emplace("plane", new Model(verts, ind, tex));
 }
 
 bool GraphicsController::PrintErrors_(unsigned line_num)

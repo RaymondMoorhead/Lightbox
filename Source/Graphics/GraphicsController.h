@@ -69,6 +69,7 @@ class GraphicsController
     
   private:
   
+    void AddHardCodedModels_();
     bool PrintErrors_(unsigned line_num);
   
     unsigned screen_width_ = 1024;
