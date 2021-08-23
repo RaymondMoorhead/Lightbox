@@ -6,21 +6,35 @@
 class Model
 {
   public:
+    // for loading from a file
     Model(const char* file, unsigned instances = 1, std::vector<glm::mat4> instance_matrices = std::vector<glm::mat4>());
+    // for hard-coded additions
+    Model
+    (
+      std::vector<Vertex>& vertices,
+      std::vector<GLuint>& indices,
+      std::vector<Texture>& textures,
+      unsigned instances = 1,
+      std::vector<glm::mat4> instance_matrices = std::vector<glm::mat4>()
+    );
   
     void Draw
     (Shader& shader,
      Camera& camera,
      glm::vec3 translation = glm::vec3(0.0f, 0.0f, 0.0f),
      glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f),
-     glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f)
+     glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f),
+     bool use_normal_map = true
      );
+     
+    bool HasNormalMap();
     
   private:
     const char* file_;
     std::vector<unsigned char> data_;
     nlohmann::json json_;
     unsigned instances_;
+    bool has_normal_map_ = false;
     
     std::vector<Mesh> meshes_;
     std::vector<glm::vec3> translations_meshes_;

@@ -9,23 +9,28 @@ out vec3 face_normal;
 out vec3 color;
 out vec2 texCoord;
 out vec3 curPos;
-out vec3 light_space_pos[10];
+out vec3 light_space_[10];
 
-uniform mat4 camMatrix;
+out DATA
+{
+  vec3 face_normal;
+  vec3 color;
+  vec2 texCoord;
+  vec3 curPos;
+  mat4 model;
+} data_out;
+
 uniform mat4 model;
 uniform mat4 translation;
 uniform mat4 rotation;
 uniform mat4 scale;
-uniform mat4 light_space_matrix[10];
 
 void main()
 {
-  face_normal = vec3(model * rotation * vec4(aNormal, 0.0f));
-  color = aColor;
-  texCoord = mat2(0.0f, -1.0f, 1.0f, 0.0f) * aTex;
-  curPos = vec3(model * translation * rotation * scale * vec4(aPos, 1.0f));
-  gl_Position = camMatrix * vec4(curPos, 1.0f);
-  
-  for(int i = 0; i < 10; ++i)
-    light_space_pos[i] = (light_space_matrix[i] * vec4(curPos, 1.0f)).xyz;
+  data_out.model = model * translation * rotation * scale;
+  data_out.face_normal = vec3(data_out.model * vec4(aNormal, 0.0f));
+  data_out.color = aColor;
+  data_out.texCoord = mat2(0.0f, -1.0f, 1.0f, 0.0f) * aTex;
+  data_out.curPos = vec3(data_out.model * vec4(aPos, 1.0f));
+  gl_Position = vec4(data_out.curPos, 1.0f);
 }

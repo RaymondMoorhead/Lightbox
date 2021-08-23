@@ -22,17 +22,44 @@ Model::Model
   TraverseNode_(0);
 }
 
+Model::Model
+(
+  std::vector<Vertex>& vertices,
+  std::vector<GLuint>& indices,
+  std::vector<Texture>& textures,
+  unsigned instances,
+  std::vector<glm::mat4> instance_matrices
+)
+{
+  meshes_.push_back(Mesh(vertices, indices, textures, instances, instance_matrices));
+  matrices_meshes_.push_back(glm::mat4(1.0f));
+  for(auto it = textures.begin(); it != textures.end(); ++it)
+  {
+    if(strcmp(it->type ,"normal") != 0)
+    {
+      has_normal_map_ = true;
+      break;
+    }
+  }
+}
+
 void Model::Draw
 (
   Shader& shader,
   Camera& camera,
   glm::vec3 translation,
   glm::quat rotation,
-  glm::vec3 scale
+  glm::vec3 scale,
+  bool use_normal_map
 )
 {
   for(unsigned i = 0; i < meshes_.size(); ++i)
-    meshes_[i].Draw(shader, camera, matrices_meshes_[i], translation, rotation, scale);
+    meshes_[i].Draw(shader, camera, matrices_meshes_[i], translation, rotation, scale, use_normal_map);
+}
+
+bool Model::HasNormalMap()
+{
+  return has_normal_map_;
 }
 
 void Model::LoadMesh_(unsigned mesh_index)

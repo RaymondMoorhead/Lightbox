@@ -2,15 +2,18 @@
 
 out vec4 FragColor;
 
+in vec3 face_normal;
 in vec3 color;
 in vec2 texCoord;
-in vec3 face_normal;
 in vec3 curPos;
+in vec3 curPosRaw;
 in vec3 light_space_pos[10];
+flat in int has_normal_map;
+in vec3 cam_pos;
 
 uniform sampler2D diffuse0;
 uniform sampler2D specular0;
-uniform vec3 camPos;
+uniform sampler2D normal0;
 uniform vec4 ambient;
 uniform float far_plane;
 
@@ -30,6 +33,9 @@ struct Light
 };
 
 uniform Light[10] lights;
+
+// final used normal, could be face or map
+vec3 normal = vec3(0.0f, 1.0f, 0.0f);
 
 float shadowCalc(int light_index)
 {
@@ -57,7 +63,7 @@ float shadowCalc(int light_index)
   }
   else
   {
-    light_to_frag = curPos - lights[light_index].pos;
+    light_to_frag = curPosRaw - lights[light_index].pos;
     dot_light_normal = dot(light_to_frag, face_normal);
     bias = max(0.05f * (1.0f - dot_light_normal), 0.05f);
     
@@ -74,7 +80,6 @@ vec4 pointLight(int lightIndex)
   float distance = length(lightVec);
   float intensity = 1.0f / (lights[lightIndex].intensity_quadratic * distance * distance + lights[lightIndex].intensity_linear * distance + 1.0f);
 
-  vec3 normal = normalize(face_normal);
   vec3 lightDir = normalize(lightVec);
   
   float ambient = 0.0f;
@@ -84,7 +89,7 @@ vec4 pointLight(int lightIndex)
   if(diffuse != 0.0f)
   {
     float specular_base = 0.5f;
-    vec3 view_dir = normalize(camPos - curPos);
+    vec3 view_dir = normalize(cam_pos - curPos);
     vec3 halfway_vec = normalize(view_dir + lightDir);
     
     float specular_amount = pow(max(dot(normal, halfway_vec), 0.0f), 16);
@@ -96,7 +101,6 @@ vec4 pointLight(int lightIndex)
 
 vec4 dirLight(int lightIndex)
 {
-  vec3 normal = normalize(face_normal);
   vec3 lightDir = normalize(-lights[lightIndex].dir);
   
   float ambient = 0.0f;
@@ -109,7 +113,7 @@ vec4 dirLight(int lightIndex)
   if(diffuse != 0.0f)
   {
     float specular_base = 0.5f;
-    vec3 view_dir = normalize(camPos - curPos);
+    vec3 view_dir = normalize(cam_pos - curPos);
     vec3 halfway_vec = normalize(view_dir + lightDir);
     float specular_amount = pow(max(dot(normal, halfway_vec), 0.0f), 16);
     specular = specular_base * specular_amount;
@@ -120,7 +124,6 @@ vec4 dirLight(int lightIndex)
 
 vec4 spotLight(int lightIndex)
 {
-  vec3 normal = normalize(face_normal);
   vec3 lightDir = normalize(lights[lightIndex].pos - curPos);
   
   float ambient = 0.0f;
@@ -130,7 +133,7 @@ vec4 spotLight(int lightIndex)
   if(diffuse != 0.0f)
   {
     float specular_base = 0.5f;
-    vec3 view_dir = normalize(camPos - curPos);
+    vec3 view_dir = normalize(cam_pos - curPos);
     vec3 halfway_vec = normalize(view_dir + lightDir);
     float specular_amount = pow(max(dot(normal, halfway_vec), 0.0f), 16);
     specular = specular_base * specular_amount;
@@ -150,6 +153,13 @@ vec4 spotLight(int lightIndex)
 
 void main()
 {
+  // apply normal map, if it exists
+  if(has_normal_map != 0)
+    normal = texture(normal0, texCoord).xyz * 2.0f - 1.0f;
+  else
+    normal = face_normal;
+  normal = normalize(normal);
+
   // add up the lights for this fragment, start with the ambient
   vec4 color = ambient;
   float shadow;

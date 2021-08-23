@@ -20,4 +20,5 @@ class Object
   
   private:
     Model* model_;
+    bool use_normal_map_ = true;
 };

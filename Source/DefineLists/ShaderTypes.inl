@@ -11,7 +11,7 @@
 // the last SHADER created in this file
 // Name is plainly typed as in the shader, values are typed as in C
 
-SHADER(Basic, "basic.vert", "basic.frag", "")
+SHADER(Basic, "basic.vert", "basic.frag", "basic.geom")
 SHADER_UNIFORM4F(ambient, 0.2f, 0.2f, 0.2f, 1.0f)
 
 SHADER(DepthCube, "shadow_map_cube.vert", "shadow_map_cube.frag", "shadow_map_cube.geom")

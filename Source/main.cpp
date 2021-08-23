@@ -34,6 +34,7 @@ int main(int argc, char** argv)
   printf("main loading models...\n");
   g_control.CreateObject("ground", Basic);
   g_control.CreateObject("statue", Basic);
+  g_control.CreateObject("plane", Basic)->translation.y = -1.0f;
 
   bool light_toggle_in_progress[g_control.num_lights] = {false};
   

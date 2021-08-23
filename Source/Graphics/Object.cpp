@@ -8,12 +8,15 @@ Object::Object(Shader* shader_, Model* model) : shader(shader_), model_(model)
 
 void Object::Draw(Camera camera, Shader* shader_)
 {
-  model_->Draw((shader_ != nullptr ? *shader_ : *shader), camera, translation, rotation, scale);
+  model_->Draw((shader_ != nullptr ? *shader_ : *shader), camera, translation, rotation, scale, use_normal_map_);
 }
 
 void Object::ImGuiDraw()
 {
   ImGui::PushID(this);
+  
+  if(model_->HasNormalMap())
+    ImGui::Checkbox("Normal Map", &use_normal_map_);
   
   ImGui::DragFloat3("Translation", &translation.x, 0.1f);
   ImGui::DragFloat3("Scale", &scale.x, 0.1f, 0.01f, 100.0f);
