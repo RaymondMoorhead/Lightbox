@@ -24,10 +24,12 @@ class Model
      glm::vec3 translation = glm::vec3(0.0f, 0.0f, 0.0f),
      glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f),
      glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f),
-     bool use_normal_map = true
+     bool use_normal_map = true,
+     bool use_displacement_map = true
      );
      
     bool HasNormalMap();
+    bool HasDisplacementMap();
     
   private:
     const char* file_;
@@ -35,6 +37,7 @@ class Model
     nlohmann::json json_;
     unsigned instances_;
     bool has_normal_map_ = false;
+    bool has_displacement_map_ = false;
     
     std::vector<Mesh> meshes_;
     std::vector<glm::vec3> translations_meshes_;

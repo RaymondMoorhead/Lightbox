@@ -30,6 +30,7 @@ struct Mesh
     glm::vec3 translation = glm::vec3(0.0f, 0.0f, 0.0f),
     glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f),
     glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f),
-    bool use_normal_map = true
+    bool use_normal_map = true,
+    bool use_displacement_map = true
   );
 };

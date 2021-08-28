@@ -51,7 +51,7 @@ void Mesh::Draw
 (
     Shader& shader, Camera& camera, glm::mat4 matrix,
     glm::vec3 translation, glm::quat rotation, glm::vec3 scale,
-    bool use_normal_map
+    bool use_normal_map, bool use_displacement_map
 )
 {
   shader.Activate();
@@ -60,6 +60,7 @@ void Mesh::Draw
   unsigned num_diffuse = 0;
   unsigned num_specular = 0;
   unsigned num_normal = 0;
+  unsigned num_displacement = 0;
   
   for(size_t i = 0; i < textures.size(); ++i)
   {
@@ -72,6 +73,8 @@ void Mesh::Draw
       num = std::to_string(num_specular++);
     else if(type == "normal")
       num = std::to_string(num_normal++);
+    else if(type == "displacement")
+      num = std::to_string(num_displacement++);
     
     // GL_TEXTURE0-19 is reserved for the shadow maps
     textures[i].SetUniform(shader, (type + num).c_str(), i + 20);
@@ -80,6 +83,7 @@ void Mesh::Draw
   glUniform3f(glGetUniformLocation(shader.id, "camPos"), camera.position.x, camera.position.y, camera.position.z);
   camera.Matrix(shader, "camMatrix");
   glUniform1i(glGetUniformLocation(shader.id, "use_normal_map"), num_normal && use_normal_map);
+  glUniform1i(glGetUniformLocation(shader.id, "use_displacement_map"), num_displacement && use_displacement_map);
   
   if(instances == 1)
   {

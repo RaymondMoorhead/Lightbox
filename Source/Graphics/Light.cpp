@@ -72,7 +72,7 @@ void Light::UpdateUniforms(Shader** shaders, unsigned light_num, unsigned num_sh
     {
       glUniform1i(loc, is_on);
       
-      loc = glGetUniformLocation(shaders[i]->id, ("lights[" + num + "].pos").c_str());
+      loc = glGetUniformLocation(shaders[i]->id, ("light_pos[" + num + "]").c_str());
       glUniform3f(loc, position.x, position.y, position.z);
       
       loc = glGetUniformLocation(shaders[i]->id, ("lights[" + num + "].dir").c_str());
