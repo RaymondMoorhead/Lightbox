@@ -21,4 +21,6 @@ class Object
   private:
     Model* model_;
     bool use_normal_map_ = true;
+    bool use_displacement_map_ = true;
+    float displacement_mod_ = 0.05f;
 };

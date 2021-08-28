@@ -36,10 +36,9 @@ Model::Model
   for(auto it = textures.begin(); it != textures.end(); ++it)
   {
     if(strcmp(it->type ,"normal") != 0)
-    {
       has_normal_map_ = true;
-      break;
-    }
+    else if(strcmp(it->type ,"displacement") != 0)
+      has_displacement_map_ = true;
   }
 }
 
@@ -50,16 +49,22 @@ void Model::Draw
   glm::vec3 translation,
   glm::quat rotation,
   glm::vec3 scale,
-  bool use_normal_map
+  bool use_normal_map,
+  bool use_displacement_map
 )
 {
   for(unsigned i = 0; i < meshes_.size(); ++i)
-    meshes_[i].Draw(shader, camera, matrices_meshes_[i], translation, rotation, scale, use_normal_map);
+    meshes_[i].Draw(shader, camera, matrices_meshes_[i], translation, rotation, scale, use_normal_map && has_normal_map_, use_displacement_map && has_displacement_map_);
 }
 
 bool Model::HasNormalMap()
 {
   return has_normal_map_;
+}
+
+bool Model::HasDisplacementMap()
+{
+  return has_displacement_map_;
 }
 
 void Model::LoadMesh_(unsigned mesh_index)

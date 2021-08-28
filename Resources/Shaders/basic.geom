@@ -6,14 +6,16 @@ layout (triangle_strip, max_vertices = 3) out;
 out vec3 face_normal;
 out vec3 color;
 out vec2 texCoord;
-out vec3 curPos;
+out vec3 curTBNPos;
 out vec3 curPosRaw;
 out vec3 light_space_pos[10];
+out vec3 light_tbn_pos[10];
 flat out int has_normal_map;
-out vec3 cam_pos;
+out vec3 camTBNPos;
 
 uniform mat4 camMatrix;
 uniform mat4 light_space_matrix[10];
+uniform vec3 light_pos[10];
 uniform int use_normal_map;
 uniform vec3 camPos;
 
@@ -46,7 +48,7 @@ void main()
     
     vec3 T = normalize(vec3(data_in[0].model * vec4(tangent, 0.0f)));
     vec3 B = normalize(vec3(data_in[0].model * vec4(bitangent, 0.0f)));
-    vec3 N = normalize(vec3(data_in[0].model * vec4(cross(edge1, edge0), 0.0f)));
+    vec3 N = normalize(data_in[0].face_normal);
     
     TBN = mat3(T, B, N);
     TBN = transpose(TBN);
@@ -57,11 +59,14 @@ void main()
   color = data_in[0].color;
   texCoord = data_in[0].texCoord;
   has_normal_map = use_normal_map;
-  curPos = TBN * data_in[0].curPos;
+  curTBNPos = TBN * data_in[0].curPos;
   curPosRaw = data_in[0].curPos;
-  cam_pos = TBN * camPos;
+  camTBNPos = TBN * camPos;
   for(int i = 0; i < 10; ++i)
+  {
     light_space_pos[i] = (light_space_matrix[i] * vec4(data_in[0].curPos, 1.0f)).xyz;
+    light_tbn_pos[i] = TBN * light_pos[i];
+  }
   EmitVertex(); // we're done with this vertex
   
   gl_Position = camMatrix * gl_in[1].gl_Position;
@@ -69,11 +74,14 @@ void main()
   color = data_in[1].color;
   texCoord = data_in[1].texCoord;
   has_normal_map = use_normal_map;
-  curPos = TBN * data_in[1].curPos;
+  curTBNPos = TBN * data_in[1].curPos;
   curPosRaw = data_in[1].curPos;
-  cam_pos = TBN * camPos;
+  camTBNPos = TBN * camPos;
   for(int i = 0; i < 10; ++i)
+  {
     light_space_pos[i] = (light_space_matrix[i] * vec4(data_in[1].curPos, 1.0f)).xyz;
+    light_tbn_pos[i] = TBN * light_pos[i];
+  }
   EmitVertex(); // we're done with this vertex
   
   gl_Position = camMatrix * gl_in[2].gl_Position;
@@ -81,11 +89,14 @@ void main()
   color = data_in[2].color;
   texCoord = data_in[2].texCoord;
   has_normal_map = use_normal_map;
-  curPos = TBN * data_in[2].curPos;
+  curTBNPos = TBN * data_in[2].curPos;
   curPosRaw = data_in[2].curPos;
-  cam_pos = TBN * camPos;
+  camTBNPos = TBN * camPos;
   for(int i = 0; i < 10; ++i)
+  {
     light_space_pos[i] = (light_space_matrix[i] * vec4(data_in[2].curPos, 1.0f)).xyz;
+    light_tbn_pos[i] = TBN * light_pos[i];
+  }
   EmitVertex(); // we're done with this vertex
   
   EndPrimitive(); // we're done with this primitive
