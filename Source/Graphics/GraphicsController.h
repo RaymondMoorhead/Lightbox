@@ -58,6 +58,8 @@ class GraphicsController
     Model* GetModel(const char* name);
     
     Shader* GetShader(ShaderType shader_type);
+    
+    double GetDeltaTime();
   
     GLFWwindow* window = nullptr;
     Camera* camera;

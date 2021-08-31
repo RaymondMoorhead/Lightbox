@@ -183,7 +183,7 @@ bool GraphicsController::Update()
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glEnable(GL_DEPTH_TEST);
   
-  camera->Inputs(window);
+  camera->Inputs(window, float(time_diff_));
   camera->UpdateMatrix(45.0f, 0.1f, 100.0f);
   
   for(unsigned i = 0; i < num_lights; ++i)
@@ -226,6 +226,8 @@ void GraphicsController::UpdateImgui()
   {
     if (ImGui::BeginMenu("Edit"))
     {
+      if(ImGui::SliderFloat("Camera Speed", &camera->base_speed, 0.25f, 10.0f))
+        camera->cur_speed = camera->base_speed;
       if(ImGui::BeginMenu("Objects"))
       {
         if(ImGui::Button("Add"))
@@ -383,6 +385,11 @@ Model* GraphicsController::GetModel(const char* name)
 Shader* GraphicsController::GetShader(ShaderType shader_type)
 {
   return shaders_[shader_type];
+}
+
+double GraphicsController::GetDeltaTime()
+{
+  return time_diff_;
 }
 
 void GraphicsController::ReloadLightUniforms(unsigned light_num)

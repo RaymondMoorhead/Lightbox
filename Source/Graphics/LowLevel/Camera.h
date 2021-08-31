@@ -16,7 +16,7 @@ struct Camera
   
   void UpdateMatrix(float fov_deg, float near, float far);
   void Matrix(Shader& shader, const char* uniform);
-  void Inputs(GLFWwindow* window);
+  void Inputs(GLFWwindow* window, float delta_time);
   
   bool first_click;
   
@@ -27,6 +27,7 @@ struct Camera
   
   int width, height;
   
-  float speed;
+  float cur_speed;
+  float base_speed;
   float sensitivity ;
 };
