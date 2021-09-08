@@ -169,7 +169,7 @@ void main()
     vec3 viewDir = normalize(camTBNPos - curTBNPos);
     const float minLayers = 8.0f;
     const float maxLayers = 64.0f;
-    float numLayers = mix(maxLayers, minLayers, abs(dot(face_normal, viewDir)));
+    float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0f, 0.0f, 1.0f), viewDir)));
     float layerDepth = 1.0f / numLayers;
     float curLayerDepth = 0.0f;
     
